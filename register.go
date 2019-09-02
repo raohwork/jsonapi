@@ -43,14 +43,14 @@ func Register(mux HTTPMux, apis []API) {
 	}
 }
 
-var reCamelTo_ *regexp.Regexp
-var reCamelTo_Excepts *regexp.Regexp
+var reCamelToUL *regexp.Regexp
+var reCamelToULExcepts *regexp.Regexp
 
 func init() {
-	reCamelTo_ = regexp.MustCompile(
+	reCamelToUL = regexp.MustCompile(
 		`([^A-Z])([A-Z])|([A-Z0-9]+)([A-Z])`,
 	)
-	reCamelTo_Excepts = regexp.MustCompile(
+	reCamelToULExcepts = regexp.MustCompile(
 		`^[A-Z0-9]*$`,
 	)
 }
@@ -98,26 +98,28 @@ func RegisterAll(
 	Register(mux, findMatchedMethods(prefix, handlers, converter))
 }
 
+// ConvertCamelToSnake is a helper to convert CamelCase to camel_case
 func ConvertCamelToSnake(name string) string {
-	if reCamelTo_Excepts.MatchString(name) {
+	if reCamelToULExcepts.MatchString(name) {
 		return strings.ToLower(name)
 	}
 
 	return strings.ToLower(
-		reCamelTo_.ReplaceAllString(
+		reCamelToUL.ReplaceAllString(
 			name,
 			"${1}${3}_${2}${4}",
 		),
 	)
 }
 
+// ConvertCamelToSlash is a helper to convert CamelCase to camel/case
 func ConvertCamelToSlash(name string) string {
-	if reCamelTo_Excepts.MatchString(name) {
+	if reCamelToULExcepts.MatchString(name) {
 		return strings.ToLower(name)
 	}
 
 	return strings.ToLower(
-		reCamelTo_.ReplaceAllString(
+		reCamelToUL.ReplaceAllString(
 			name,
 			"${1}${3}/${2}${4}",
 		),

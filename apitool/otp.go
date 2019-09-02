@@ -86,6 +86,7 @@ func (m TOTPMiddleware) verify(code string) (ok bool) {
 	return m.HOTP(frame-1) == code
 }
 
+// Middleware is the *real* middleware part of TOTPMiddleware
 func (m TOTPMiddleware) Middleware(h jsonapi.Handler) (ret jsonapi.Handler) {
 	return func(r jsonapi.Request) (data interface{}, err error) {
 		// safe to set struct member as it is passed by value
@@ -104,6 +105,7 @@ func (m TOTPMiddleware) Middleware(h jsonapi.Handler) (ret jsonapi.Handler) {
 	}
 }
 
+// predefined error indicates you are failed to auth with otp
 var E403TOTP = jsonapi.E403.SetData("failed to auth with TOTP")
 
 // DefaultOTPFailHandler is the default implementation for TOTP failure handler

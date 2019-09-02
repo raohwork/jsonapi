@@ -19,17 +19,24 @@ import (
 
 // Request represents most used data a handler need
 type Request interface {
+	// Decode() helps you to read parameters in request body
 	Decode(interface{}) error
+	// R() retrieves original http request
 	R() *http.Request
+	// W() retrieves original http response writer
 	W() http.ResponseWriter
+	// WithValue() adds a new key-value pair in context of http request
 	WithValue(key, val interface{}) Request
 }
 
 // FakeRequest implements a Request and let you do some magic in it
 type FakeRequest struct {
+	// this is used to implement Request.Decode()
 	Decoder *json.Decoder
-	Req     *http.Request
-	Resp    http.ResponseWriter
+	// this is used to implement Request.R() and Request.WithValue()
+	Req *http.Request
+	// this is used to implement Request.W()
+	Resp http.ResponseWriter
 }
 
 func (r *FakeRequest) Decode(data interface{}) error {
