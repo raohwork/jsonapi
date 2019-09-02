@@ -1,7 +1,9 @@
 Package jsonapi is simple wrapper for buildin net/http package.
 It aims to let developers build json-based web api easier.
 
+[![GoDoc](https://godoc.org/github.com/raohwork/jsonapi?status.svg)](https://godoc.org/github.com/raohwork/jsonapi)
 [![Build Status](https://travis-ci.org/raohwork/jsonapi.svg?branch=master)](https://travis-ci.org/raohwork/jsonapi)
+[![Go Report Card](https://goreportcard.com/badge/github.com/raohwork/jsonapi)](https://goreportcard.com/report/github.com/raohwork/jsonapi)
 
 # Usage
 
