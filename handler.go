@@ -93,6 +93,6 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(code)
-	resp["errors"] = []*ErrObj{&ErrObj{Detail: err.Error()}}
+	resp["errors"] = []*ErrObj{{Detail: err.Error()}}
 	enc.Encode(resp)
 }
