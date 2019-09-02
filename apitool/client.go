@@ -32,13 +32,13 @@ var EClient = jsonapi.Error{Code: -1}.SetData("Client error")
 type Client interface {
 	// Synchronized call
 	//
-	// If any io error or json decoding error occured, an
+	// If any io error or json decoding error occurred, an
 	// EClient.SetOrigin(the_error) returns.
 	Exec(param, result interface{}) error
 	// Asynchronized call, Client take response to close the channel
 	// result is guaranteed to be filled when error returns.
 	//
-	// If any io error or json decoding error occured, an
+	// If any io error or json decoding error occurred, an
 	// EClient.SetOrigin(the_error) returns.
 	Do(param, result interface{}) chan error
 }
@@ -71,7 +71,7 @@ type callResp struct {
 //
 // It's caller's response to close response body.
 //
-// If any io error or json decoding error occured, an
+// If any io error or json decoding error occurred, an
 // EClient.SetOrigin(the_error) returns.
 func ParseResponse(resp *http.Response, result interface{}) error {
 	var res callResp
