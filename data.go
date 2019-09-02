@@ -39,18 +39,22 @@ type FakeRequest struct {
 	Resp http.ResponseWriter
 }
 
+// Decode implements Request
 func (r *FakeRequest) Decode(data interface{}) error {
 	return r.Decoder.Decode(data)
 }
 
+// R implements Request
 func (r *FakeRequest) R() *http.Request {
 	return r.Req
 }
 
+// W implements Request
 func (r *FakeRequest) W() http.ResponseWriter {
 	return r.Resp
 }
 
+// WithValue implements Request
 func (r *FakeRequest) WithValue(key, val interface{}) (ret Request) {
 	req := r.Req
 	req = req.WithContext(

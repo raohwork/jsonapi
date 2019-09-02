@@ -105,7 +105,7 @@ func (m TOTPMiddleware) Middleware(h jsonapi.Handler) (ret jsonapi.Handler) {
 	}
 }
 
-// predefined error indicates you are failed to auth with otp
+// E403TOTP is a predefined error indicates you are failed to auth with otp
 var E403TOTP = jsonapi.E403.SetData("failed to auth with TOTP")
 
 // DefaultOTPFailHandler is the default implementation for TOTP failure handler
