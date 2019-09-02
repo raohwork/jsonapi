@@ -1,6 +1,8 @@
 Package jsonapi is simple wrapper for buildin net/http package.
 It aims to let developers build json-based web api easier.
 
+[![Build Status](https://travis-ci.org/raohwork/jsonapi.svg?branch=master)](https://travis-ci.org/raohwork/jsonapi)
+
 # Usage
 
 Create an api handler is so easy:
@@ -116,3 +118,9 @@ func main() {
 ```
 
 There're few pre-defined middlewares in package `apitool`, see [godoc](https://godoc.org/github.com/raohwork/jsonapi/apitool).
+
+# License
+
+LGPLv3 | MPL2.0
+
+Copyright 2019- Ronmi Ren <ronmi.ren@gmail.com>
