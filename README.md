@@ -110,6 +110,7 @@ func runtimeLog(h jsonapi.Handler) jsonapi.Handler {
         begin := time.Now().Unix()
         data, err = h(r)
         log.Printf("processed path %s in %d seconds", r.R().URL.Path, time.Now().Unix()-begin)
+        return
     }
 }
 
