@@ -1,5 +1,3 @@
-//+build rtoolkit_session
-
 // This file is part of jsonapi
 //
 // jsonapi is distributed in two licenses: The Mozilla Public License,
@@ -13,44 +11,46 @@
 
 package apitool
 
-import (
-	"context"
+import "github.com/raohwork/jsonapi"
 
-	"github.com/Ronmi/rtoolkit/session"
-	"github.com/raohwork/jsonapi"
-)
+// SessionData defines how you can access session data
+type SessionData interface {
+	// Returns session id
+	ID() string
+	// Set a value
+	Set(key string, val interface{})
+	// Set a vallue that can be read once.
+	SetOnce(key string, val interface{})
+	// Get a value
+	Get(key string) (val interface{}, ok bool)
+	// Save session data to the store
+	Save() error
+	// Abandon this session
+	Discard() error
+}
 
-// Session creates a api middleware that handles session related functions
-//
-// If you are facing "Trailer Header" problem with original session middleware,
-// this should be helpful.
-//
-//     jsonapi.With(
-//         apitool.Session(mySessMgr),
-//     ).RegisterAll(myHandlerClass)
-//
-// Created middleware will try to save update cookie ttl value if possible. It
-// fails silently.
-//
-// You have add build tag `rtoolkit_session` to use this middleware.
-func Session(m *session.Manager) jsonapi.Middleware {
-	return func(h jsonapi.Handler) jsonapi.Handler {
-		return func(req jsonapi.Request) (i interface{}, e error) {
-			r := req.R()
-			sess, err := m.Start(req.W(), r)
-			if err != nil {
-				return nil, jsonapi.E500.SetOrigin(err)
-			}
+// ErrSessionNotFound indicates there's no session registered with this request
+type ErrSessionNotFound string
 
-			r = r.WithContext(context.WithValue(
-				r.Context(),
-				session.SessionObjectKey,
-				sess,
-			))
-			i, e = h(jsonapi.WrapRequest(req, r))
+func (e ErrSessionNotFound) Error() string { return string(e) }
 
-			_ = sess.Save(req.W())
-			return
+// SessionProvider defines how you can allocate session
+type SessionProvider interface {
+	// Returns existed session, or creates one if not exist.
+	// Returns error if failed to get/create one due to internal error.
+	Get(jsonapi.Request) (SessionData, error)
+	// Requests to delete outdated session data.
+	// It should be a NO-OP if the provider does not support it.
+	GC()
+}
+
+// Session is a middleware to inject session data into request
+func Session(p SessionProvider, key string) jsonapi.Middleware {
+	return func(h jsonapi.Handler) (ret jsonapi.Handler) {
+		return func(r jsonapi.Request) (data interface{}, err error) {
+			sess, _ := p.Get(r)
+			r = r.WithValue(key, sess)
+			return h(r)
 		}
 	}
 }
