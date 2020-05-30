@@ -63,6 +63,7 @@ func (s sessData) Save() (err error) {
 func (s sessData) Discard() (err error) {
 	s.s.Values = map[interface{}]interface{}{}
 	s.onceW = map[string]interface{}{}
+	s.s.Options.MaxAge = -1
 	return s.Save()
 }
 

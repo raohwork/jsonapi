@@ -44,7 +44,7 @@ type SessionProvider interface {
 	GC()
 }
 
-// Session is a middleware to inject session data into request
+// Session is a middleware to inject SessionData into request
 func Session(p SessionProvider, key string) jsonapi.Middleware {
 	return func(h jsonapi.Handler) (ret jsonapi.Handler) {
 		return func(r jsonapi.Request) (data interface{}, err error) {
@@ -53,4 +53,15 @@ func Session(p SessionProvider, key string) jsonapi.Middleware {
 			return h(r)
 		}
 	}
+}
+
+// GetSesion extracts SessionData which injected by middleware
+func GetSession(r jsonapi.Request, key string) (sess SessionData, ok bool) {
+	val := r.R().Context().Value(key)
+	if val == nil {
+		return
+	}
+
+	sess, ok = val.(SessionData)
+	return
 }
