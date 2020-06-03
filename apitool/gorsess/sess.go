@@ -31,6 +31,10 @@ func (s sessData) ID() string {
 	return s.s.ID
 }
 
+func (s sessData) Unset(key string) {
+	delete(s.s.Values, key)
+}
+
 func (s sessData) Set(key string, val interface{}) {
 	s.s.Values[key] = val
 }

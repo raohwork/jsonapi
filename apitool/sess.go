@@ -17,6 +17,8 @@ import "github.com/raohwork/jsonapi"
 type SessionData interface {
 	// Returns session id
 	ID() string
+	// Delete a value
+	Unset(key string)
 	// Set a value
 	Set(key string, val interface{})
 	// Set a vallue that can be read once.
