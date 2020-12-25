@@ -7,13 +7,7 @@
 // ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 // FOR A PARTICULAR PURPOSE.
 //
-// See LICENSE.txt for further information.
+// See LICENSE for further information.
 
-module github.com/raohwork/jsonapi
-
-go 1.12
-
-require (
-	github.com/gorilla/sessions v1.2.0
-	github.com/jackc/pgx/v4 v4.10.1
-)
+// Package sessez provides an easy to use session to work with jsonapi
+package sessez
