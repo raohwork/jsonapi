@@ -20,6 +20,11 @@ import (
 
 const index = "_flash_index"
 
+func init() {
+	// type guard
+	_ = apitool.SessionData(&sessData{})
+}
+
 type sessData struct {
 	s     *sessions.Session
 	onceR map[string]interface{}
@@ -71,6 +76,9 @@ func (s sessData) Discard() (err error) {
 	return s.Save()
 }
 
+// New creates a SessionProvider using gorilla/sessions.Store
+//
+// It does not support on-demand garbage collecting (SessionProvider.GC()).
 func New(store sessions.Store, name string) (ret apitool.SessionProvider) {
 	return &provider{
 		Store: store,

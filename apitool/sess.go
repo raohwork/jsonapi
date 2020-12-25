@@ -14,6 +14,11 @@ package apitool
 import "github.com/raohwork/jsonapi"
 
 // SessionData defines how you can access session data
+//
+// The data contained *MAY* be just a snapshot of real data in session store.
+// SessionProvider *MUST* provide document about it.
+//
+// SessionData instance *MUST NOT* share across multiple goroutines.
 type SessionData interface {
 	// Returns session id
 	ID() string
@@ -37,6 +42,9 @@ type ErrSessionNotFound string
 func (e ErrSessionNotFound) Error() string { return string(e) }
 
 // SessionProvider defines how you can allocate session
+//
+// SessionProvider itself *MUST* be thread-safe, but SessionData it loads/creates
+// *MAY* be thread-unsafe.
 type SessionProvider interface {
 	// Returns existed session, or creates one if not exist.
 	// Returns error if failed to get/create one due to internal error.
