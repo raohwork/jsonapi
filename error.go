@@ -176,10 +176,10 @@ var (
 // Here's a common usage:
 //
 //   if err := req.Decode(&param); err != nil {
-//       return jsonapi.E(err, jsonapi.E400.SetData("invalid parameter"))
+//       return jsonapi.Failed(err, jsonapi.E400.SetData("invalid parameter"))
 //   }
 //   if err := param.IsValid(); err != nil {
-//       return jsonapi.E(err, jsonapi.E400.SetData("invalid parameter"))
+//       return jsonapi.Failed(err, jsonapi.E400.SetData("invalid parameter"))
 //   }
 func Failed(e1 error, e2 Error) (data interface{}, err error) {
 	return data, e2.SetOrigin(e1)
