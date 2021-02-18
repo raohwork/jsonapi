@@ -124,6 +124,6 @@ There're few pre-defined middlewares in package `apitool`, see [godoc](https://g
 
 # License
 
-LGPLv3 | MPL2.0
+See LICENSE.txt
 
 Copyright 2019- Ronmi Ren <ronmi.ren@gmail.com>
