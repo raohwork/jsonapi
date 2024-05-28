@@ -5,6 +5,7 @@
 package jsonapi
 
 import (
+	"context"
 	"errors"
 	"net/http/httptest"
 	"testing"
@@ -12,7 +13,7 @@ import (
 
 func TestHandler(t *testing.T) {
 	fac := func(data interface{}, err error) Handler {
-		return func(req Request) (interface{}, error) {
+		return func(_ context.Context, req Request) (interface{}, error) {
 			return data, err
 		}
 	}
@@ -124,7 +125,7 @@ func TestHandler(t *testing.T) {
 		if w.Code != 301 {
 			t.Errorf("unexpected status: %d", w.Code)
 		}
-		if l := w.HeaderMap.Get("Location"); l != uri {
+		if l := w.Result().Header.Get("Location"); l != uri {
 			t.Errorf("unexpected location header: %s", l)
 		}
 	})
@@ -133,7 +134,8 @@ func TestHandler(t *testing.T) {
 		if w.Code != 301 {
 			t.Errorf("unexpected status: %d", w.Code)
 		}
-		if l := w.HeaderMap.Get("Location"); l != uri {
+
+		if l := w.Result().Header.Get("Location"); l != uri {
 			t.Errorf("unexpected location header: %s", l)
 		}
 	})
