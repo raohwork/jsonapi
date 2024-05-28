@@ -7,6 +7,7 @@ package apitest
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -25,8 +26,8 @@ func NewRequest(method, target string, data interface{}) *http.Request {
 // Modify creates a middleware that do some magic before running handler
 func Modify(f func(jsonapi.Request) jsonapi.Request) jsonapi.Middleware {
 	return func(h jsonapi.Handler) jsonapi.Handler {
-		return func(r jsonapi.Request) (interface{}, error) {
-			return h(f(r))
+		return func(ctx context.Context, r jsonapi.Request) (interface{}, error) {
+			return h(ctx, f(r))
 		}
 	}
 }
@@ -34,8 +35,8 @@ func Modify(f func(jsonapi.Request) jsonapi.Request) jsonapi.Middleware {
 // Monitor creates a middleware that do some magic after running handler
 func Monitor(f func(jsonapi.Request, interface{}, error)) jsonapi.Middleware {
 	return func(h jsonapi.Handler) jsonapi.Handler {
-		return func(r jsonapi.Request) (interface{}, error) {
-			data, err := h(r)
+		return func(ctx context.Context, r jsonapi.Request) (interface{}, error) {
+			data, err := h(ctx, r)
 			f(r, data, err)
 			return data, err
 		}
@@ -49,8 +50,8 @@ type Test jsonapi.Handler
 //
 // It executes in REVERSE ORDER:
 //
-//     // order: m2 > m1 > h > m1 > m2
-//     Test(h).With(m1).With(m2).Use(data)
+//	// order: m2 > m1 > h > m1 > m2
+//	Test(h).With(m1).With(m2).Use(data)
 func (t Test) With(m jsonapi.Middleware) Test {
 	return Test(m(jsonapi.Handler(t)))
 }
@@ -60,7 +61,7 @@ func (t Test) UseRequest(req *http.Request) (interface{}, error) {
 	defer req.Body.Close()
 
 	w := httptest.NewRecorder()
-	return t(jsonapi.FromHTTP(w, req))
+	return t(req.Context(), jsonapi.FromHTTP(w, req))
 }
 
 // Use executes handler with your data

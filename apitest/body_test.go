@@ -6,6 +6,7 @@ package apitest
 
 import (
 	"bytes"
+	"context"
 	"testing"
 
 	"github.com/raohwork/jsonapi"
@@ -15,23 +16,23 @@ func TestWithOrder(t *testing.T) {
 	buf := &bytes.Buffer{}
 
 	m1 := func(h jsonapi.Handler) jsonapi.Handler {
-		return func(r jsonapi.Request) (interface{}, error) {
+		return func(ctx context.Context, r jsonapi.Request) (interface{}, error) {
 			buf.WriteByte('1')
-			data, err := h(r)
+			data, err := h(ctx, r)
 			buf.WriteByte('1')
 			return data, err
 		}
 	}
 	m2 := func(h jsonapi.Handler) jsonapi.Handler {
-		return func(r jsonapi.Request) (interface{}, error) {
+		return func(ctx context.Context, r jsonapi.Request) (interface{}, error) {
 			buf.WriteByte('2')
-			data, err := h(r)
+			data, err := h(ctx, r)
 			buf.WriteByte('2')
 			return data, err
 		}
 	}
 
-	h := func(r jsonapi.Request) (interface{}, error) {
+	h := func(_ context.Context, r jsonapi.Request) (interface{}, error) {
 		buf.WriteByte('3')
 		return nil, nil
 	}

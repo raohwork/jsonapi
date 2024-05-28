@@ -5,6 +5,7 @@
 package apitool
 
 import (
+	"context"
 	"strconv"
 	"strings"
 
@@ -14,8 +15,8 @@ import (
 // ForceHeader creates a middleware to enforce response header
 func ForceHeader(headers map[string]string) jsonapi.Middleware {
 	return func(h jsonapi.Handler) (ret jsonapi.Handler) {
-		return func(r jsonapi.Request) (data interface{}, err error) {
-			data, err = h(r)
+		return func(ctx context.Context, r jsonapi.Request) (data interface{}, err error) {
+			data, err = h(ctx, r)
 			for k, v := range headers {
 				r.W().Header().Set(k, v)
 			}
@@ -56,10 +57,10 @@ func doCORS(h jsonapi.Handler, opt CORSOption) (ret jsonapi.Handler) {
 	}
 	simple := ForceHeader(simpleHeaders)(h)
 
-	return func(r jsonapi.Request) (data interface{}, err error) {
+	return func(ctx context.Context, r jsonapi.Request) (data interface{}, err error) {
 		if r.R().Method != "OPTIONS" {
 			// simple or normal request
-			return simple(r)
+			return simple(ctx, r)
 		}
 
 		hdr := map[string]string{}
@@ -67,7 +68,7 @@ func doCORS(h jsonapi.Handler, opt CORSOption) (ret jsonapi.Handler) {
 		x := r.R().Header.Get("Access-Control-Request-Method")
 		if x == "" {
 			// not preflighted request
-			return simple(r)
+			return simple(ctx, r)
 		}
 		hdr[hMethods] = x
 		if len(opt.Methods) > 0 {
@@ -78,7 +79,7 @@ func doCORS(h jsonapi.Handler, opt CORSOption) (ret jsonapi.Handler) {
 		x = r.R().Header.Get("Access-Control-Request-Headers")
 		if x == "" {
 			// not preflighted request
-			return simple(r)
+			return simple(ctx, r)
 		}
 		hdr[hHeaders] = x
 		if len(opt.Methods) > 0 {
@@ -96,7 +97,7 @@ func doCORS(h jsonapi.Handler, opt CORSOption) (ret jsonapi.Handler) {
 			hdr[hMaxAge] = strconv.FormatUint(opt.MaxAge, 10)
 		}
 
-		return ForceHeader(hdr)(h)(r)
+		return ForceHeader(hdr)(h)(ctx, r)
 	}
 }
 

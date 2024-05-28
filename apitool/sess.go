@@ -4,7 +4,11 @@
 
 package apitool
 
-import "github.com/raohwork/jsonapi"
+import (
+	"context"
+
+	"github.com/raohwork/jsonapi"
+)
 
 // SessionData defines how you can access session data
 //
@@ -31,33 +35,32 @@ type ErrSessionNotFound string
 
 func (e ErrSessionNotFound) Error() string { return string(e) }
 
-// SessionProvider defines how you can allocate session
+// SessionProvider defines how you can allocate session. It returns error only if
+// the error is meant to report to user, otherwise it should returns empty data with
+// no error.
 //
-// SessionProvider itself *MUST* be thread-safe, but SessionData loaded/created
-// *MAY* be thread-unsafe.
-type SessionProvider interface {
-	// Returns existed session, or creates one if not exist.
-	// Returns error if failed to get/create one due to internal error.
-	Get(jsonapi.Request) (SessionData, error)
-	// Requests to delete outdated session data.
-	// It should be a NO-OP if the provider does not support it.
-	GC()
-}
+// SessionProvider itself *MUST* be thread-safe, but SessionData loaded/created by
+// it *MAY* be thread-unsafe.
+type SessionProvider func(context.Context, jsonapi.Request) (SessionData, error)
 
-// Session is a middleware to inject SessionData into request
+// Session is a middleware to inject SessionData into context.
 func Session(p SessionProvider, key string) jsonapi.Middleware {
 	return func(h jsonapi.Handler) (ret jsonapi.Handler) {
-		return func(r jsonapi.Request) (data interface{}, err error) {
-			sess, _ := p.Get(r)
-			r = r.WithValue(key, sess)
-			return h(r)
+		return func(ctx context.Context, r jsonapi.Request) (data interface{}, err error) {
+			sess, err := p(ctx, r)
+			if err != nil {
+				return
+			}
+
+			ctx = context.WithValue(ctx, key, sess)
+			return h(ctx, r)
 		}
 	}
 }
 
 // GetSesion extracts SessionData which injected by middleware
-func GetSession(r jsonapi.Request, key string) (sess SessionData, ok bool) {
-	val := r.R().Context().Value(key)
+func GetSession(ctx context.Context, key string) (sess SessionData, ok bool) {
+	val := ctx.Value(key)
 	if val == nil {
 		return
 	}

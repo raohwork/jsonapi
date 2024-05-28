@@ -5,6 +5,7 @@
 package apitool
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/raohwork/jsonapi"
@@ -15,13 +16,13 @@ type LogProvider func(r *http.Request, data interface{}, err error)
 
 // LogIn wraps handler, uses LogProvider p for logging purpose
 //
-//      jsonapi.With(
-//          apitools.LogIn(apitool.JSONFormat(myLogger))
-//      ).RegisterAll(myHandlerClass)
+//	jsonapi.With(
+//	    apitools.LogIn(apitool.JSONFormat(myLogger))
+//	).RegisterAll(myHandlerClass)
 func LogIn(p LogProvider) jsonapi.Middleware {
 	return jsonapi.Middleware(func(h jsonapi.Handler) jsonapi.Handler {
-		return jsonapi.Handler(func(req jsonapi.Request) (interface{}, error) {
-			data, err := h(req)
+		return jsonapi.Handler(func(ctx context.Context, req jsonapi.Request) (interface{}, error) {
+			data, err := h(ctx, req)
 			p(req.R(), data, err)
 
 			return data, err
@@ -31,13 +32,13 @@ func LogIn(p LogProvider) jsonapi.Middleware {
 
 // LogErrIn wraps handler, uses LogProvider p for logging purpose, but only for errors
 //
-//      jsonapi.With(
-//          apitools.LogErrIn(apitool.JSONFormat(myLogger))
-//      ).RegisterAll(myHandlerClass)
+//	jsonapi.With(
+//	    apitools.LogErrIn(apitool.JSONFormat(myLogger))
+//	).RegisterAll(myHandlerClass)
 func LogErrIn(p LogProvider) jsonapi.Middleware {
 	return jsonapi.Middleware(func(h jsonapi.Handler) jsonapi.Handler {
-		return jsonapi.Handler(func(req jsonapi.Request) (interface{}, error) {
-			data, err := h(req)
+		return jsonapi.Handler(func(ctx context.Context, req jsonapi.Request) (interface{}, error) {
+			data, err := h(ctx, req)
 			if err != nil {
 				p(req.R(), data, err)
 			}

@@ -5,6 +5,7 @@
 package apitool
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +27,7 @@ type RespGreeting struct {
 }
 
 // greeting is handler of Greeting API
-func Greeting(r jsonapi.Request) (interface{}, error) {
+func Greeting(_ context.Context, r jsonapi.Request) (interface{}, error) {
 	var p ParamGreeting
 	if err := r.Decode(&p); err != nil {
 		return nil, jsonapi.APPERR.SetData(
