@@ -6,6 +6,7 @@ package jsonapi
 
 import (
 	"bytes"
+	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -53,23 +54,23 @@ func TestRegisterOrder(t *testing.T) {
 	buf := &bytes.Buffer{}
 
 	m1 := func(h Handler) Handler {
-		return Handler(func(req Request) (interface{}, error) {
+		return Handler(func(ctx context.Context, req Request) (interface{}, error) {
 			buf.WriteByte('1')
-			data, err := h(req)
+			data, err := h(ctx, req)
 			buf.WriteByte('1')
 			return data, err
 		})
 	}
 	m2 := func(h Handler) Handler {
-		return Handler(func(req Request) (interface{}, error) {
+		return Handler(func(ctx context.Context, req Request) (interface{}, error) {
 			buf.WriteByte('2')
-			data, err := h(req)
+			data, err := h(ctx, req)
 			buf.WriteByte('2')
 			return data, err
 		})
 	}
 
-	h := func(req Request) (interface{}, error) {
+	h := func(_ context.Context, req Request) (interface{}, error) {
 		buf.WriteByte('3')
 		return nil, nil
 	}

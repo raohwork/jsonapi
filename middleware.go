@@ -9,22 +9,22 @@ type Middleware func(Handler) Handler
 
 // Registerer represents a chain of middleware
 //
-//     With(
-//         myMiddleware
-//     ).With(
-//         apitool.LogIn(apitool.JSONFormat(
-//             log.New(os.Stdout, "myapp", log.LstdFlags),
-//         )),
-//     ).RegisterAll(mux, "/api", myHandler)
+//	With(
+//	    myMiddleware
+//	).With(
+//	    apitool.LogIn(apitool.JSONFormat(
+//	        log.New(os.Stdout, "myapp", log.LstdFlags),
+//	    )),
+//	).RegisterAll(mux, "/api", myHandler)
 //
 // Request processing flow will be:
 //
-//     1. mux.ServeHTTP
-//     2. myMiddleWare
-//     3. Logging middleware
-//     4. myHandler
-//     5. Logging middleware
-//     6. myMiddleWare
+//  1. mux.ServeHTTP
+//  2. myMiddleWare
+//  3. Logging middleware
+//  4. myHandler
+//  5. Logging middleware
+//  6. myMiddleWare
 type Registerer interface {
 	Register(mux HTTPMux, apis []API)
 	RegisterAll(mux HTTPMux, prefix string, handlers interface{},

@@ -5,6 +5,7 @@
 package jsonapi
 
 import (
+	"context"
 	"errors"
 	"strconv"
 )
@@ -123,12 +124,7 @@ func fromError(e *Error) *ErrObj {
 
 // here are predefined error instances, you should call SetData before use it like
 //
-//     return nil, E404.SetData("User not found")
-//
-// You might noticed that here's no 500 error. You should just return a normal error
-// instance instead.
-//
-//     return nil, errors.New("internal server error")
+//	return nil, E404.SetData("User not found")
 var (
 	EUnknown = Error{Code: 0, message: "Unknown error"}
 	E301     = Error{Code: 301, message: "Resource has been moved permanently"}
@@ -175,12 +171,24 @@ var (
 //
 // Here's a common usage:
 //
-//   if err := req.Decode(&param); err != nil {
-//       return jsonapi.Failed(err, jsonapi.E400.SetData("invalid parameter"))
-//   }
-//   if err := param.IsValid(); err != nil {
-//       return jsonapi.Failed(err, jsonapi.E400.SetData("invalid parameter"))
-//   }
+//	if err := req.Decode(&param); err != nil {
+//		return jsonapi.Failed(err, jsonapi.E400.SetData("invalid parameter"))
+//	}
+//	if err := param.IsValid(); err != nil {
+//		return jsonapi.Failed(err, jsonapi.E400.SetData("invalid parameter"))
+//	}
 func Failed(e1 error, e2 Error) (data interface{}, err error) {
 	return data, e2.SetOrigin(e1)
+}
+
+// IsCanceled checks ctx and returns E400 if it is done.
+//
+// Handlers should check this before doing resource-consuming task.
+func IsCanceled(ctx context.Context) error {
+	select {
+	case <-ctx.Done():
+		return E400.SetData(ctx.Err().Error())
+	default:
+		return nil
+	}
 }

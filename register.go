@@ -5,6 +5,7 @@
 package jsonapi
 
 import (
+	"context"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -21,7 +22,7 @@ type HTTPMux interface {
 // API denotes how a json api handler registers to a servemux
 type API struct {
 	Pattern string
-	Handler func(Request) (interface{}, error)
+	Handler func(context.Context, Request) (interface{}, error)
 }
 
 // Register helps you to register many APIHandlers to a http.ServeHTTPMux
@@ -56,7 +57,7 @@ func findMatchedMethods(
 	ret := make([]API, 0, v.NumMethod())
 
 	for x, t := 0, v.Type(); x < v.NumMethod(); x++ {
-		h, ok := v.Method(x).Interface().(func(Request) (interface{}, error))
+		h, ok := v.Method(x).Interface().(func(context.Context, Request) (interface{}, error))
 		if !ok {
 			// incorrect signature, skip
 			continue
