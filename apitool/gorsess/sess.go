@@ -6,6 +6,8 @@
 package gorsess
 
 import (
+	"context"
+
 	"github.com/gorilla/sessions"
 	"github.com/raohwork/jsonapi"
 	"github.com/raohwork/jsonapi/apitool"
@@ -73,10 +75,11 @@ func (s sessData) Discard() (err error) {
 //
 // It does not support on-demand garbage collecting (SessionProvider.GC()).
 func New(store sessions.Store, name string) (ret apitool.SessionProvider) {
-	return &provider{
+	x := &provider{
 		Store: store,
 		Name:  name,
 	}
+	return x.Get
 }
 
 type provider struct {
@@ -84,7 +87,7 @@ type provider struct {
 	Name  string
 }
 
-func (p *provider) Get(r jsonapi.Request) (ret apitool.SessionData, err error) {
+func (p *provider) Get(_ context.Context, r jsonapi.Request) (ret apitool.SessionData, err error) {
 	s, err := p.Store.Get(r.R(), p.Name)
 	if err != nil {
 		return
@@ -114,5 +117,3 @@ func (p *provider) Get(r jsonapi.Request) (ret apitool.SessionData, err error) {
 	}
 	return
 }
-
-func (p *provider) GC() {}

@@ -5,6 +5,7 @@
 package sessez
 
 import (
+	"context"
 	"time"
 
 	"github.com/raohwork/jsonapi"
@@ -70,18 +71,21 @@ func (d *sessionData) Discard() (err error) {
 
 // New creates a SessionProvider
 func New(saveID IDHandler, s Store, ttl time.Duration) (ret apitool.SessionProvider) {
-	return &sessionProvider{
-		saveID, s, ttl,
+	x := &sessionProvider{
+		saveID, s, ttl, time.Now(),
 	}
+	return x.Get
 }
 
 type sessionProvider struct {
-	h   IDHandler
-	s   Store
-	ttl time.Duration
+	h      IDHandler
+	s      Store
+	ttl    time.Duration
+	lastGC time.Time
 }
 
-func (p *sessionProvider) Get(r jsonapi.Request) (ret apitool.SessionData, err error) {
+func (p *sessionProvider) Get(_ context.Context, r jsonapi.Request) (ret apitool.SessionData, err error) {
+	defer p.GC()
 	id := p.h.Get(r)
 	if id == "" {
 		id, err = p.s.New(p.ttl)

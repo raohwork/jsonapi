@@ -5,8 +5,9 @@
 package gorsess
 
 import (
+	"context"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -18,8 +19,8 @@ import (
 	"github.com/raohwork/jsonapi/apitool"
 )
 
-func testHandler(r jsonapi.Request) (data interface{}, err error) {
-	sess, ok := apitool.GetSession(r, "reqkey")
+func testHandler(ctx context.Context, r jsonapi.Request) (data interface{}, err error) {
+	sess, ok := apitool.GetSession(ctx, "reqkey")
 	if !ok {
 		err = errors.New("no session injected")
 		return
@@ -84,7 +85,7 @@ func (s *testSuit) testSetData(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	buf, err := ioutil.ReadAll(resp.Body)
+	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal("reading response: unexpected error: ", err)
 	}
@@ -126,7 +127,7 @@ func (s *testSuit) testGetData(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	buf, err := ioutil.ReadAll(resp.Body)
+	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal("reading response: unexpected error: ", err)
 	}
@@ -168,7 +169,7 @@ func (s *testSuit) testDiscard(t *testing.T) {
 	}
 	defer resp.Body.Close()
 
-	buf, err := ioutil.ReadAll(resp.Body)
+	buf, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatal("reading response: unexpected error: ", err)
 	}
