@@ -53,10 +53,13 @@ func ExampleClient() {
 	server := RunAPIServer()
 	defer server.Close()
 
-	client := Call("POST", server.URL+"/greeting", nil)
+	client := &Client{
+		Method: "POST",
+		URL:    server.URL + "/greeting",
+	}
 
 	var resp RespGreeting
-	err := client.Exec(ParamGreeting{Name: "John", Surname: "Doe"}, &resp)
+	err := client.Call(ParamGreeting{Name: "John", Surname: "Doe"}, &resp)
 	if err != nil {
 		fmt.Println(err)
 		return

@@ -14,44 +14,68 @@ import (
 	"github.com/raohwork/jsonapi"
 )
 
-// EClient indicates something goes wrong at client side while calling remote jsonapi
-var EClient = jsonapi.Error{Code: -1}.SetData("Client error")
-
-// Client is a helper to simplify the process of calling jsonapi
-//
-// Any error during the call process will immediately return as
-// jsonapi.InternalError.SetOrigin(the_error)
-type Client interface {
-	// Synchronized call
-	//
-	// If any io error or json decoding error occurred, an
-	// EClient.SetOrigin(the_error) returns.
-	Exec(param, result interface{}) error
-	// Asynchronized call, Client take response to close the channel
-	// result is guaranteed to be filled when error returns.
-	//
-	// If any io error or json decoding error occurred, an
-	// EClient.SetOrigin(the_error) returns.
-	Do(param, result interface{}) chan error
+// EClient indicates something wrong at client side while calling remote jsonapi
+type EClient struct {
+	e error
 }
 
-type clientFunc func(interface{}, interface{}) error
+func (e EClient) Error() string { return "api client error: " + e.e.Error() }
+func (e EClient) Unwrap() error { return e.e }
 
-// Exec calls to specified
-func (c clientFunc) Exec(param, result interface{}) error {
-	return c(param, result)
+// Client represnts a client binded to specified API endpoint. Zero value always
+// returns error.
+type Client struct {
+	// endpoint. this is required
+	URL string
+	// http method to access this endpoint. this is required
+	Method string
+	// a optional function to modify request, like, set auth header
+	Modifier func(*http.Request) *http.Request
+	// http client to send request, nil = http.DefaultClient
+	HTTPClient *http.Client
 }
 
-func (c clientFunc) Do(param, result interface{}) chan error {
-	ret := make(chan error, 1)
+// Call sends param to the endpoint, and parses response with ParseResponse.
+func (c *Client) Call(param, result any) error {
+	return c.CallWithContext(context.TODO(), param, result)
+}
 
-	go func() {
-		defer close(ret)
+// CallWithContext is same as Call, but the request is created with ctx.
+func (c *Client) CallWithContext(ctx context.Context, param, result any) (err error) {
+	resp, err := c.SendWithContext(ctx, param)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	defer io.Copy(io.Discard, resp.Body)
+	return ParseResponse(resp, result)
+}
 
-		ret <- c.Exec(param, result)
-	}()
+// Send sends param to the endpoint. You have to parse response by your self.
+func (c *Client) Send(ctx context.Context, param any) (resp *http.Response, err error) {
+	return c.SendWithContext(context.TODO(), param)
+}
 
-	return ret
+// SendWithContext is same as Send, but the request is created with ctx.
+func (c *Client) SendWithContext(ctx context.Context, param any) (resp *http.Response, err error) {
+	cl := c.HTTPClient
+	if cl == nil {
+		cl = http.DefaultClient
+	}
+
+	buf, err := json.Marshal(param)
+	if err != nil {
+		return
+	}
+	body := bytes.NewReader(buf)
+	req, err := http.NewRequestWithContext(ctx, c.Method, c.URL, body)
+	if err != nil {
+		return
+	}
+	if c.Modifier != nil {
+		req = c.Modifier(req)
+	}
+	return cl.Do(req)
 }
 
 type callResp struct {
@@ -63,17 +87,16 @@ type callResp struct {
 //
 // It's caller's response to close response body.
 //
-// If any io error or json decoding error occurred, an
-// EClient.SetOrigin(the_error) returns.
+// If any io error or json decoding error occurred, an EClient is returned.
 func ParseResponse(resp *http.Response, result interface{}) error {
 	var res callResp
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
-		return EClient.SetOrigin(err)
+		return EClient{err}
 	}
 
 	if d := res.Data; d != nil {
 		if err := json.Unmarshal([]byte(*d), result); err != nil {
-			return EClient.SetOrigin(err)
+			return EClient{err}
 		}
 	}
 
@@ -82,39 +105,4 @@ func ParseResponse(resp *http.Response, result interface{}) error {
 	}
 
 	return res.Errors[0].AsError()
-}
-
-// Call creates an Client to a jsonapi entry
-//
-// It will use http.DefaultClient if c == nil, but it's not recommended.
-func Call(method, uri string, client *http.Client) Client {
-	c := client
-	if c == nil {
-		c = http.DefaultClient
-	}
-
-	return clientFunc(func(param, result interface{}) error {
-		data, err := json.Marshal(param)
-		if err != nil {
-			return EClient.SetOrigin(err)
-		}
-
-		req, err := http.NewRequest(method, uri, bytes.NewReader(data))
-		if err != nil {
-			return EClient.SetOrigin(err)
-		}
-		ctx, cancel := context.WithCancel(context.Background())
-		req = req.WithContext(ctx)
-
-		resp, err := c.Do(req)
-		if err != nil {
-			cancel()
-			return EClient.SetOrigin(err)
-		}
-		defer resp.Body.Close()
-		defer io.Copy(io.Discard, resp.Body)
-		defer cancel()
-
-		return ParseResponse(resp, result)
-	})
 }
