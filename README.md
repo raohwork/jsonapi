@@ -1,7 +1,7 @@
 Package jsonapi is simple wrapper for buildin net/http package.
 It aims to let developers build json-based web api easier.
 
-[![GoDoc](https://godoc.org/github.com/raohwork/jsonapi?status.svg)](https://godoc.org/github.com/raohwork/jsonapi)
+[![GoDoc](https://pkg.go.dev/github.com/raohwork/jsonapi?status.svg)](https://pkg.go.dev/github.com/raohwork/jsonapi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/raohwork/jsonapi)](https://goreportcard.com/report/github.com/raohwork/jsonapi)
 
 # Usage
@@ -119,10 +119,10 @@ func main() {
 }
 ```
 
-There're few pre-defined middlewares in package `apitool`, see [godoc](https://godoc.org/github.com/raohwork/jsonapi/apitool).
+There're few pre-defined middlewares in package `apitool`, see [godoc](https://pkg.go.dev/github.com/raohwork/jsonapi/apitool).
 
 # License
 
-See LICENSE.txt
+Mozilla Public License Version 2.0
 
 Copyright 2019- Ronmi Ren <ronmi.ren@gmail.com>
