@@ -78,6 +78,10 @@ func findMatchedMethods(
 
 // RegisterAll helps you to register all handler methods
 //
+// You should avoid using this since it does not support new routing features
+// introduced in Go 1.22, but feel free to use this if your API doesn't care about
+// HTTP method and path values.
+//
 // As using reflection to do the job, only exported methods with correct
 // signature are registered.
 //
