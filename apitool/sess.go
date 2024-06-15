@@ -1,15 +1,6 @@
-//+build rtoolkit_session
-
-// This file is part of jsonapi
-//
-// jsonapi is distributed in two licenses: The Mozilla Public License,
-// v. 2.0 and the GNU Lesser Public License.
-//
-// jsonapi is distributed in the hope that it will be useful, but WITHOUT
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.
-//
-// See LICENSE for further information.
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 package apitool
 
@@ -25,9 +16,9 @@ import (
 // If you are facing "Trailer Header" problem with original session middleware,
 // this should be helpful.
 //
-//     jsonapi.With(
-//         apitool.Session(mySessMgr),
-//     ).RegisterAll(myHandlerClass)
+//	jsonapi.With(
+//	    apitool.Session(mySessMgr),
+//	).RegisterAll(myHandlerClass)
 //
 // Created middleware will try to save update cookie ttl value if possible. It
 // fails silently.
