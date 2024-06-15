@@ -6,6 +6,11 @@ It aims to let developers build json-based web api easier.
 
 # Breaking changes before v1
 
+### From v0.1.x to v0.2.x
+
+- Old logging middleware is removed.
+- Old session middleware is removed.
+
 # Usage
 
 Create an api handler is so easy:
