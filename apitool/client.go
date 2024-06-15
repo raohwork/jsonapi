@@ -15,12 +15,16 @@ import (
 )
 
 // EClient indicates something goes wrong at client side while calling remote jsonapi
+//
+// Deprecated: api client code is rewrited and placed in package callapi.
 var EClient = jsonapi.Error{Code: -1}.SetData("Client error")
 
 // Client is a helper to simplify the process of calling jsonapi
 //
 // Any error during the call process will immediately return as
 // jsonapi.InternalError.SetOrigin(the_error)
+//
+// Deprecated: api client code is rewrited and placed in package callapi.
 type Client interface {
 	// Synchronized call
 	//
@@ -65,6 +69,8 @@ type callResp struct {
 //
 // If any io error or json decoding error occurred, an
 // EClient.SetOrigin(the_error) returns.
+//
+// Deprecated: api client code is rewrited and placed in package callapi.
 func ParseResponse(resp *http.Response, result interface{}) error {
 	var res callResp
 	if err := json.NewDecoder(resp.Body).Decode(&res); err != nil {
@@ -87,6 +93,8 @@ func ParseResponse(resp *http.Response, result interface{}) error {
 // Call creates an Client to a jsonapi entry
 //
 // It will use http.DefaultClient if c == nil, but it's not recommended.
+//
+// Deprecated: api client code is rewrited and placed in package callapi.
 func Call(method, uri string, client *http.Client) Client {
 	c := client
 	if c == nil {

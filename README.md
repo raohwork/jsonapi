@@ -4,12 +4,13 @@ It aims to let developers build json-based web api easier.
 [![GoDoc](https://godoc.org/github.com/raohwork/jsonapi?status.svg)](https://pkg.go.dev/github.com/raohwork/jsonapi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/raohwork/jsonapi)](https://goreportcard.com/report/github.com/raohwork/jsonapi)
 
-# Breaking changes before v1
+# Notable changes before v1
 
 ### From v0.1.x to v0.2.x
 
 - Old logging middleware is removed.
 - Old session middleware is removed.
+- apitool.Client is deprecated, and will be removed in v0.3.0
 
 # Usage
 
