@@ -9,7 +9,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/raohwork/jsonapi"
@@ -113,7 +112,7 @@ func Call(method, uri string, client *http.Client) Client {
 			return EClient.SetOrigin(err)
 		}
 		defer resp.Body.Close()
-		defer io.Copy(ioutil.Discard, resp.Body)
+		defer io.Copy(io.Discard, resp.Body)
 		defer cancel()
 
 		return ParseResponse(resp, result)

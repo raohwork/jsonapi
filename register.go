@@ -84,6 +84,10 @@ func findMatchedMethods(
 // CovertCamelToSnake for example.
 //
 // If converter is nil, name will leave unchanged.
+//
+// As Go1.21, [http.ServeMux] is more feature-rich: you can bind http handler to
+// specified http method. But it's too complicated to support this good cool feature
+// here.
 func RegisterAll(
 	mux HTTPMux, prefix string, handlers interface{},
 	converter func(string) string,
