@@ -12,7 +12,7 @@
 // [Endpoint] or using [Builder] should solve your problem.
 //
 // Though not recommended, it's possible to call other APIs (Twitter, GCP, ...) by
-// providing special designed [Encoder] and [Parser], or use [Builder].
+// providing specially designed [Encoder] and [Parser], or use [Builder].
 package callapi
 
 // EP creates a Caller from http method and url, with common settings which is
