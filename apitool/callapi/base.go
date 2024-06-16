@@ -8,7 +8,7 @@
 // For calling an API server written with pakcage jsonapi, [EP] and [NewEP] should
 // solve your problem.
 //
-// For more complicated case, like multi-factor authetication, implementing your own
+// For more complicated case, like signing the request, implementing your own
 // [Endpoint] should solve your problem.
 //
 // Though not recommended, it's possible to call other APIs (Twitter, GCP, ...) by
