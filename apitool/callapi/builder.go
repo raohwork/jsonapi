@@ -4,7 +4,9 @@
 
 package callapi
 
-import "net/http"
+import (
+	"net/http"
+)
 
 // Builder is a builder to build many [Caller] with same settings. Zero value builds
 // same [Caller] as [EP] does.
