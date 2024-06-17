@@ -99,7 +99,7 @@ With following Go code:
 ```go
 type MyStruct struct {
     X int  `json:"x"`
-    Y bool `json:"y"
+    Y bool `json:"y"`
 }
 
 func MyAPI(q jsonapi.Request) (ret interface{}, err error) {
