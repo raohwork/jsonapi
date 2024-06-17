@@ -129,11 +129,11 @@ func OTPCodeByForm(key string) func(*http.Request) string {
 //
 // It is identical to the following code, which is also actual implementation:
 //
-//     return (TOTPMiddleware{
-//         Secret: secret,
-//         GetCode: OTPCodeByHeader(headerKey),
-//         Failed: DefaultOTPFailHandler,
-//     }).Middleware
+//	return (TOTPMiddleware{
+//	    Secret: secret,
+//	    GetCode: OTPCodeByHeader(headerKey),
+//	    Failed: DefaultOTPFailHandler,
+//	}).Middleware
 func TOTPInHeader(secret [10]byte, headerKey string) jsonapi.Middleware {
 	return (TOTPMiddleware{
 		Secret:  secret,
@@ -149,11 +149,11 @@ func TOTPInHeader(secret [10]byte, headerKey string) jsonapi.Middleware {
 //
 // It is identical to the following code, which is also actual implementation:
 //
-//     return (TOTPMiddleware{
-//         Secret: secret,
-//         GetCode: OTPCodeByForm(formKey),
-//         Failed: DefaultOTPFailHandler,
-//     }).Middleware
+//	return (TOTPMiddleware{
+//	    Secret: secret,
+//	    GetCode: OTPCodeByForm(formKey),
+//	    Failed: DefaultOTPFailHandler,
+//	}).Middleware
 func TOTPInForm(secret [10]byte, formKey string) jsonapi.Middleware {
 	return (TOTPMiddleware{
 		Secret:  secret,

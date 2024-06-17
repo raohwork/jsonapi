@@ -25,19 +25,19 @@ func setHeaderIfEmpty(r jsonapi.Request, key, val string) {
 //
 // It's no-op if handler returns any error.
 //
-//     // If browser send If-Modified-Since >= dateA, 304 is returned, "hello" otherwise.
-//     //
-//     // If browser send If-Modified-Since < dateA, "hello" is always replied.
-//     func h1(r jsonapi.Request) (interface{}, error) {
-//         r.W().Header().Set("Last-Mdified", dateA.UTC().Format(http.TimeFormat))
-//         return "hello", nil
-//     }
+//	// If browser send If-Modified-Since >= dateA, 304 is returned, "hello" otherwise.
+//	//
+//	// If browser send If-Modified-Since < dateA, "hello" is always replied.
+//	func h1(r jsonapi.Request) (interface{}, error) {
+//	    r.W().Header().Set("Last-Mdified", dateA.UTC().Format(http.TimeFormat))
+//	    return "hello", nil
+//	}
 //
-//     // Always return 404 to browser.
-//     func h2(r jsonapi.Request) (interface{}, error) {
-//         r.W().Header().Set("Last-Mdified", dateA.UTC().Format(http.TimeFormat))
-//         return 1, jsonapi.E404
-//     }
+//	// Always return 404 to browser.
+//	func h2(r jsonapi.Request) (interface{}, error) {
+//	    r.W().Header().Set("Last-Mdified", dateA.UTC().Format(http.TimeFormat))
+//	    return 1, jsonapi.E404
+//	}
 func LastModify(h jsonapi.Handler) (ret jsonapi.Handler) {
 	return func(r jsonapi.Request) (data interface{}, err error) {
 		if data, err = h(r); err != nil {

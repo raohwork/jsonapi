@@ -14,9 +14,9 @@ import (
 //
 // It checks for following situations:
 //
-//     - data must be nil
-//     - err must be jsonapi.Error type
-//     - expect.EqualTo(err) == true
+//   - data must be nil
+//   - err must be jsonapi.Error type
+//   - expect.EqualTo(err) == true
 func AssertError(t *testing.T, expect jsonapi.Error, data interface{}, err error) jsonapi.Error {
 	if data != nil {
 		t.Errorf("handler in error state should not return any data, got %#v", data)
