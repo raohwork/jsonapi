@@ -2,12 +2,14 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
-package apitool
+package callapi
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"time"
 
 	"github.com/raohwork/jsonapi"
 )
@@ -47,15 +49,19 @@ func RunAPIServer() *httptest.Server {
 	return httptest.NewServer(http.DefaultServeMux)
 }
 
-func ExampleClient() {
+func Example() {
 	// start the API server
 	server := RunAPIServer()
 	defer server.Close()
 
-	client := Call("POST", server.URL+"/greeting", nil)
+	caller := EP("POST", server.URL+"/greeting")
+
+	// http request timeout info
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Second)
+	defer cancel()
 
 	var resp RespGreeting
-	err := client.Exec(ParamGreeting{Name: "John", Surname: "Doe"}, &resp)
+	err := caller.Call(ctx, ParamGreeting{Name: "John", Surname: "Doe"}, &resp)
 	if err != nil {
 		fmt.Println(err)
 		return

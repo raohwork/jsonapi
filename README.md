@@ -1,9 +1,25 @@
 Package jsonapi is simple wrapper for buildin net/http package.
 It aims to let developers build json-based web api easier.
 
-[![GoDoc](https://godoc.org/github.com/raohwork/jsonapi?status.svg)](https://godoc.org/github.com/raohwork/jsonapi)
-[![Build Status](https://travis-ci.org/raohwork/jsonapi.svg?branch=master)](https://travis-ci.org/raohwork/jsonapi)
+[![GoDoc](https://pkg.go.dev/github.com/raohwork/jsonapi?status.svg)](https://pkg.go.dev/github.com/raohwork/jsonapi)
 [![Go Report Card](https://goreportcard.com/badge/github.com/raohwork/jsonapi)](https://goreportcard.com/report/github.com/raohwork/jsonapi)
+
+# Notable changes before v1
+
+### v0.2.x
+
+There're 2 breaking changes:
+
+- logging middleware is removed.
+- session middleware is removed.
+
+And 3 tools are deprecated:
+
+- apitool.Client
+- apitool.Call
+- apitool.ParseResponse
+
+Deprecated components will be removed at v0.3.0
 
 # Usage
 
@@ -52,6 +68,28 @@ http.Handle("/api/hello", jsonapi.Handler(HelloHandler))
 
 Generated response is a subset of [jsonapi specs](https://jsonapi.org). Refer to
 `handler_test.go` for examples.
+
+### Call API with Go
+
+```go
+var result MyResult
+param := MyParam { ... }
+err := callapi.EP(http.MethodPost, uri).Call(ctx, param, &result)
+var (
+    eClient callapi.EClient
+    eFormat callapi.EFormat
+)
+if err != nil {
+    switch {
+    case errors.As(err, &eClient):
+        log.Fatal("failed to send request:", err)
+    case errors.As(err, &eFormat):
+        log.Fatal("failed to parse response:", err)
+    default:
+        log.Fatal("API returns error:", err)
+    }
+}
+```
 
 ### Call API with TypeScript
 
@@ -120,10 +158,10 @@ func main() {
 }
 ```
 
-There're few pre-defined middlewares in package `apitool`, see [godoc](https://godoc.org/github.com/raohwork/jsonapi/apitool).
+There're few pre-defined middlewares in package `apitool`, see [godoc](https://pkg.go.dev/github.com/raohwork/jsonapi/apitool).
 
 # License
 
-LGPLv3 | MPL2.0
+Mozilla Public License Version 2.0
 
 Copyright 2019- Ronmi Ren <ronmi.ren@gmail.com>

@@ -1,13 +1,6 @@
-// This file is part of jsonapi
-//
-// jsonapi is distributed in two licenses: The Mozilla Public License,
-// v. 2.0 and the GNU Lesser Public License.
-//
-// jsonapi is distributed in the hope that it will be useful, but WITHOUT
-// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE.
-//
-// See LICENSE for further information.
+// This Source Code Form is subject to the terms of the Mozilla Public
+// License, v. 2.0. If a copy of the MPL was not distributed with this
+// file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 package jsonapi
 
@@ -91,6 +84,10 @@ func findMatchedMethods(
 // CovertCamelToSnake for example.
 //
 // If converter is nil, name will leave unchanged.
+//
+// As Go1.21, [http.ServeMux] is more feature-rich: you can bind http handler to
+// specified http method. But it's too complicated to support this good cool feature
+// here.
 func RegisterAll(
 	mux HTTPMux, prefix string, handlers interface{},
 	converter func(string) string,
