@@ -35,7 +35,7 @@ func (s Sender) ParseWith(p Parser) Caller {
 //
 //	var result MyAPIResultType
 //	param := MyAPIParam{ ... }
-//	err := endpoint.By(sneder).With(parser).Call(ctx, param, result)
+//	err := endpoint.SendBy(sneder).ParseWith(parser).Call(ctx, param, result)
 type Caller func(ctx context.Context, param, result any) error
 
 // Call calls the API with Caller c. It's identical to c(ctx, param, result).
